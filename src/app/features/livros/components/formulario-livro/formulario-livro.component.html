@@ -1,0 +1,24 @@
+<div style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee;">
+  <h3>Cadastrar Novo Livro</h3>
+  
+  <div *ngIf="mensagemErro" style="color: red; margin-bottom: 10px;">
+    {{ mensagemErro }}
+  </div>
+
+  <form (ngSubmit)="salvarLivro()" style="display: flex; flex-direction: column; gap: 10px; max-width: 400px;">
+    <input type="text" [(ngModel)]="novoLivro.titulo" name="titulo" placeholder="Título" required>
+    <input type="text" [(ngModel)]="novoLivro.autor" name="autor" placeholder="Autor" required>
+    <input type="text" [(ngModel)]="novoLivro.categoria" name="categoria" placeholder="Categoria">
+    <input type="number" [(ngModel)]="novoLivro.ano" name="ano" placeholder="Ano">
+    
+    <select [(ngModel)]="novoLivro.status" name="status">
+      <option value="disponivel">Disponível</option>
+      <option value="emprestado">Emprestado</option>
+      <option value="manutencao">Em Manutenção</option>
+    </select>
+
+    <textarea [(ngModel)]="novoLivro.descricao" name="descricao" placeholder="Descrição"></textarea>
+    
+    <button type="submit">Salvar Livro</button>
+  </form>
+</div>

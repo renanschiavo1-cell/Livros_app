@@ -1,0 +1,19 @@
+<div>
+  <app-formulario-livro (livroAdicionado)="aoLivroAdicionado()"></app-formulario-livro>
+  
+  <hr>
+
+  <div>
+    <input 
+      type="text" 
+      [(ngModel)]="termoBusca" 
+      (input)="filtrarLivros()" 
+      placeholder="Pesquisar por título ou autor"
+    >
+  </div>
+
+  <app-lista-livros 
+    [livros]="livrosFiltrados" 
+    (livroExcluido)="aoLivroExcluido($event)">
+  </app-lista-livros>
+</div>

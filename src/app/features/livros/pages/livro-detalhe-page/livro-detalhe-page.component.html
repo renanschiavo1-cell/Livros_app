@@ -1,0 +1,21 @@
+<div>
+  <button (click)="voltar()">Voltar</button>
+
+  <div *ngIf="mensagemErro" style="color: red; margin-top: 15px;">
+    {{ mensagemErro }}
+  </div>
+
+  <div *ngIf="livro" style="margin-top: 20px;">
+    <h2>{{ livro.titulo }}</h2>
+    <p><strong>Autor:</strong> {{ livro.autor }}</p>
+    <p><strong>Categoria:</strong> {{ livro.categoria }}</p>
+    <p><strong>Ano:</strong> {{ livro.ano }}</p>
+    <p><strong>Status Atual:</strong> {{ livro.status }}</p>
+    <p><strong>Descrição:</strong> {{ livro.descricao }}</p>
+
+    <div style="margin-top: 20px; display: flex; gap: 10px;">
+      <button (click)="alterarStatus('disponivel')">Marcar Disponível</button>
+      <button (click)="alterarStatus('emprestado')">Marcar Emprestado</button>
+    </div>
+  </div>
+</div>

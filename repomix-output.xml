@@ -1,0 +1,1205 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+public/
+  favicon.ico
+src/
+  app/
+    features/
+      livros/
+        components/
+          formulario-livro/
+            formulario-livro.component.html
+            formulario-livro.css
+            formulario-livro.spec.ts
+            formulario-livro.ts
+          lista-livros/
+            lista-livros.component.html
+            lista-livros.css
+            lista-livros.spec.ts
+            lista-livros.ts
+          livro-card/
+            livro-card.component.html
+            livro-card.css
+            livro-card.spec.ts
+            livro-card.ts
+        models/
+          livro.ts
+        pages/
+          livro-detalhe-page/
+            livro-detalhe-page.css
+            livro-detalhe-page.html
+            livro-detalhe-page.spec.ts
+            livro-detalhe-page.ts
+          livros-page/
+            livros-page.css
+            livros-page.html
+            livros-page.spec.ts
+            livros-page.ts
+        services/
+          livros.service.ts
+          livros.spec.ts
+    app.config.server.ts
+    app.config.ts
+    app.css
+    app.html
+    app.routes.server.ts
+    app.routes.ts
+    app.spec.ts
+    app.ts
+  index.html
+  main.server.ts
+  main.ts
+  server.ts
+  styles.css
+.editorconfig
+.gitignore
+.prettierrc
+angular.json
+package.json
+README.md
+tsconfig.app.json
+tsconfig.json
+tsconfig.spec.json
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="src/app/features/livros/components/formulario-livro/formulario-livro.component.html">
+<div style="margin-bottom: 20px; padding: 15px; border: 1px solid #eee;">
+  <h3>Cadastrar Novo Livro</h3>
+  
+  <div *ngIf="mensagemErro" style="color: red; margin-bottom: 10px;">
+    {{ mensagemErro }}
+  </div>
+
+  <form (ngSubmit)="salvarLivro()" style="display: flex; flex-direction: column; gap: 10px; max-width: 400px;">
+    <input type="text" [(ngModel)]="novoLivro.titulo" name="titulo" placeholder="Título" required>
+    <input type="text" [(ngModel)]="novoLivro.autor" name="autor" placeholder="Autor" required>
+    <input type="text" [(ngModel)]="novoLivro.categoria" name="categoria" placeholder="Categoria">
+    <input type="number" [(ngModel)]="novoLivro.ano" name="ano" placeholder="Ano">
+    
+    <select [(ngModel)]="novoLivro.status" name="status">
+      <option value="disponivel">Disponível</option>
+      <option value="emprestado">Emprestado</option>
+      <option value="manutencao">Em Manutenção</option>
+    </select>
+
+    <textarea [(ngModel)]="novoLivro.descricao" name="descricao" placeholder="Descrição"></textarea>
+    
+    <button type="submit">Salvar Livro</button>
+  </form>
+</div>
+</file>
+
+<file path="src/app/features/livros/components/formulario-livro/formulario-livro.css">
+
+</file>
+
+<file path="src/app/features/livros/components/formulario-livro/formulario-livro.spec.ts">
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { FormularioLivro } from './formulario-livro';
+
+describe('FormularioLivro', () => {
+  let component: FormularioLivro;
+  let fixture: ComponentFixture<FormularioLivro>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [FormularioLivro],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(FormularioLivro);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+</file>
+
+<file path="src/app/features/livros/components/formulario-livro/formulario-livro.ts">
+import { Component, Output, EventEmitter } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { LivrosService } from '../../services/livros.service';
+import { Livro } from '../../models/livro';
+
+@Component({
+  selector: 'app-formulario-livro',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './formulario-livro.component.html'
+})
+export class FormularioLivroComponent {
+  @Output() livroAdicionado = new EventEmitter<void>();
+
+  novoLivro: Livro = {
+    titulo: '',
+    autor: '',
+    categoria: '',
+    ano: new Date().getFullYear(),
+    status: 'disponivel',
+    descricao: ''
+  };
+
+  mensagemErro: string = '';
+
+  constructor(private livrosService: LivrosService) {}
+
+  salvarLivro(): void {
+    if (!this.novoLivro.titulo || !this.novoLivro.autor) {
+      this.mensagemErro = 'Título e autor são obrigatórios.';
+      return;
+    }
+
+    this.mensagemErro = '';
+    
+    this.livrosService.createLivro(this.novoLivro).subscribe({
+      next: () => {
+        this.livroAdicionado.emit();
+        this.resetarFormulario();
+      },
+      error: () => this.mensagemErro = 'Falha ao conectar com a API.'
+    });
+  }
+
+  resetarFormulario(): void {
+    this.novoLivro = {
+      titulo: '',
+      autor: '',
+      categoria: '',
+      ano: new Date().getFullYear(),
+      status: 'disponivel',
+      descricao: ''
+    };
+  }
+}
+</file>
+
+<file path="src/app/features/livros/components/lista-livros/lista-livros.component.html">
+<div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 20px;">
+  <app-livro-card 
+    *ngFor="let livro of livros" 
+    [livro]="livro" 
+    (excluir)="onExcluir($event)">
+  </app-livro-card>
+</div>
+</file>
+
+<file path="src/app/features/livros/components/lista-livros/lista-livros.css">
+
+</file>
+
+<file path="src/app/features/livros/components/lista-livros/lista-livros.spec.ts">
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { ListaLivros } from './lista-livros';
+
+describe('ListaLivros', () => {
+  let component: ListaLivros;
+  let fixture: ComponentFixture<ListaLivros>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [ListaLivros],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(ListaLivros);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+</file>
+
+<file path="src/app/features/livros/components/lista-livros/lista-livros.ts">
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Livro } from '../../models/livro';
+import { LivroCardComponent } from '../livro-card/livro-card.component';
+
+@Component({
+  selector: 'app-lista-livros',
+  standalone: true,
+  imports: [CommonModule, LivroCardComponent],
+  templateUrl: './lista-livros.component.html'
+})
+export class ListaLivrosComponent {
+  @Input() livros: Livro[] = [];
+  @Output() livroExcluido = new EventEmitter<string>();
+
+  onExcluir(id: string): void {
+    this.livroExcluido.emit(id);
+  }
+}
+</file>
+
+<file path="src/app/features/livros/components/livro-card/livro-card.component.html">
+<div style="border: 1px solid #ccc; padding: 15px; border-radius: 8px; width: 250px;">
+  <h3>{{ livro.titulo }}</h3>
+  <p><strong>Autor:</strong> {{ livro.autor }}</p>
+  <p><strong>Status:</strong> {{ livro.status }}</p>
+  
+  <div style="display: flex; gap: 10px; margin-top: 15px;">
+    <button [routerLink]="['/livros', livro.id]">Detalhes</button>
+    <button (click)="onExcluir()" style="color: red;">Excluir</button>
+  </div>
+</div>
+</file>
+
+<file path="src/app/features/livros/components/livro-card/livro-card.css">
+
+</file>
+
+<file path="src/app/features/livros/components/livro-card/livro-card.spec.ts">
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { LivroCardComponent } from './livro-card.component';
+import { ActivatedRoute } from '@angular/router';
+import { of } from 'rxjs';
+
+describe('LivroCardComponent', () => {
+  let component: LivroCardComponent;
+  let fixture: ComponentFixture<LivroCardComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [LivroCardComponent],
+      providers: [
+        {
+          provide: ActivatedRoute,
+          useValue: { params: of({}) }
+        }
+      ]
+    }).compileComponents();
+    
+    fixture = TestBed.createComponent(LivroCardComponent);
+    component = fixture.componentInstance;
+    
+    component.livro = {
+      id: '123',
+      titulo: 'Test Livro',
+      autor: 'Test Autor',
+      categoria: 'TI',
+      ano: 2024,
+      status: 'disponivel'
+    };
+    
+    fixture.detectChanges();
+  });
+
+  it('deve criar o componente', () => {
+    expect(component).toBeTruthy();
+  });
+});
+</file>
+
+<file path="src/app/features/livros/components/livro-card/livro-card.ts">
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { Livro } from '../../models/livro';
+
+@Component({
+  selector: 'app-livro-card',
+  standalone: true,
+  imports: [CommonModule, RouterModule],
+  templateUrl: './livro-card.component.html'
+})
+export class LivroCardComponent {
+  @Input() livro!: Livro;
+  @Output() excluir = new EventEmitter<string>();
+
+  onExcluir(): void {
+    if (this.livro.id) {
+      this.excluir.emit(this.livro.id);
+    }
+  }
+}
+</file>
+
+<file path="src/app/features/livros/models/livro.ts">
+export interface Livro {
+  id?: string;
+  titulo: string;
+  autor: string;
+  categoria: string;
+  ano: number;
+  status: string;
+  descricao?: string;
+}
+</file>
+
+<file path="src/app/features/livros/pages/livro-detalhe-page/livro-detalhe-page.css">
+
+</file>
+
+<file path="src/app/features/livros/pages/livro-detalhe-page/livro-detalhe-page.html">
+<div>
+  <button (click)="voltar()">Voltar</button>
+
+  <div *ngIf="mensagemErro" style="color: red; margin-top: 15px;">
+    {{ mensagemErro }}
+  </div>
+
+  <div *ngIf="livro" style="margin-top: 20px;">
+    <h2>{{ livro.titulo }}</h2>
+    <p><strong>Autor:</strong> {{ livro.autor }}</p>
+    <p><strong>Categoria:</strong> {{ livro.categoria }}</p>
+    <p><strong>Ano:</strong> {{ livro.ano }}</p>
+    <p><strong>Status Atual:</strong> {{ livro.status }}</p>
+    <p><strong>Descrição:</strong> {{ livro.descricao }}</p>
+
+    <div style="margin-top: 20px; display: flex; gap: 10px;">
+      <button (click)="alterarStatus('disponivel')">Marcar Disponível</button>
+      <button (click)="alterarStatus('emprestado')">Marcar Emprestado</button>
+    </div>
+  </div>
+</div>
+</file>
+
+<file path="src/app/features/livros/pages/livro-detalhe-page/livro-detalhe-page.spec.ts">
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { LivroDetalhePage } from './livro-detalhe-page';
+
+describe('LivroDetalhePage', () => {
+  let component: LivroDetalhePage;
+  let fixture: ComponentFixture<LivroDetalhePage>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [LivroDetalhePage],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(LivroDetalhePage);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+</file>
+
+<file path="src/app/features/livros/pages/livro-detalhe-page/livro-detalhe-page.ts">
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ActivatedRoute, RouterModule, Router } from '@angular/router';
+import { LivrosService } from '../../services/livros.service';
+import { Livro } from '../../models/livro';
+
+@Component({
+  selector: 'app-livro-detalhe-page',
+  standalone: true,
+  imports: [CommonModule, RouterModule],
+  templateUrl: './livro-detalhe-page.component.html'
+})
+export class LivroDetalhePageComponent implements OnInit {
+  livro?: Livro;
+  mensagemErro: string = '';
+
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private livrosService: LivrosService
+  ) {}
+
+  ngOnInit(): void {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.livrosService.getLivroById(id).subscribe({
+        next: (dados) => this.livro = dados,
+        error: () => this.mensagemErro = 'Livro não encontrado ou falha na API.'
+      });
+    }
+  }
+
+  alterarStatus(novoStatus: string): void {
+    if (this.livro && this.livro.id) {
+      const livroAtualizado = { ...this.livro, status: novoStatus };
+      this.livrosService.updateLivro(this.livro.id, livroAtualizado).subscribe({
+        next: (dados) => this.livro = dados,
+        error: () => this.mensagemErro = 'Falha ao atualizar o status.'
+      });
+    }
+  }
+
+  voltar(): void {
+    this.router.navigate(['/livros']);
+  }
+}
+</file>
+
+<file path="src/app/features/livros/pages/livros-page/livros-page.css">
+
+</file>
+
+<file path="src/app/features/livros/pages/livros-page/livros-page.html">
+<div>
+  <app-formulario-livro (livroAdicionado)="aoLivroAdicionado()"></app-formulario-livro>
+  
+  <hr>
+
+  <div>
+    <input 
+      type="text" 
+      [(ngModel)]="termoBusca" 
+      (input)="filtrarLivros()" 
+      placeholder="Pesquisar por título ou autor"
+    >
+  </div>
+
+  <app-lista-livros 
+    [livros]="livrosFiltrados" 
+    (livroExcluido)="aoLivroExcluido($event)">
+  </app-lista-livros>
+</div>
+</file>
+
+<file path="src/app/features/livros/pages/livros-page/livros-page.spec.ts">
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { LivrosPage } from './livros-page';
+
+describe('LivrosPage', () => {
+  let component: LivrosPage;
+  let fixture: ComponentFixture<LivrosPage>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [LivrosPage],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(LivrosPage);
+    component = fixture.componentInstance;
+    await fixture.whenStable();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+</file>
+
+<file path="src/app/features/livros/pages/livros-page/livros-page.ts">
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { LivrosService } from '../../services/livros.service';
+import { Livro } from '../../models/livro';
+import { ListaLivrosComponent } from '../../components/lista-livros/lista-livros.component';
+import { FormularioLivroComponent } from '../../components/formulario-livro/formulario-livro.component';
+
+@Component({
+  selector: 'app-livros-page',
+  standalone: true,
+  imports: [CommonModule, FormsModule, ListaLivrosComponent, FormularioLivroComponent],
+  templateUrl: './livros-page.component.html'
+})
+export class LivrosPageComponent implements OnInit {
+  livros: Livro[] = [];
+  livrosFiltrados: Livro[] = [];
+  termoBusca: string = '';
+
+  constructor(private livrosService: LivrosService) {}
+
+  ngOnInit(): void {
+    this.carregarLivros();
+  }
+
+  carregarLivros(): void {
+    this.livrosService.getLivros().subscribe({
+      next: (dados) => {
+        this.livros = dados;
+        this.livrosFiltrados = dados;
+      },
+      error: (erro) => console.error('Erro ao carregar livros', erro)
+    });
+  }
+
+  filtrarLivros(): void {
+    this.livrosFiltrados = this.livros.filter(livro =>
+      livro.titulo.toLowerCase().includes(this.termoBusca.toLowerCase()) ||
+      livro.autor.toLowerCase().includes(this.termoBusca.toLowerCase())
+    );
+  }
+
+  aoLivroAdicionado(): void {
+    this.carregarLivros();
+  }
+
+  aoLivroExcluido(id: string): void {
+    this.livrosService.deleteLivro(id).subscribe({
+      next: () => this.carregarLivros(),
+      error: (erro) => console.error('Erro ao excluir', erro)
+    });
+  }
+}
+</file>
+
+<file path="src/app/features/livros/services/livros.service.ts">
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { Livro } from '../models/livro';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class LivrosService {
+  private apiUrl = 'http://localhost:3000/api/livros';
+
+  constructor(private http: HttpClient) { }
+
+  getLivros(): Observable<Livro[]> {
+    return this.http.get<Livro[]>(this.apiUrl);
+  }
+
+  getLivroById(id: string): Observable<Livro> {
+    return this.http.get<Livro>(`${this.apiUrl}/${id}`);
+  }
+
+  createLivro(livro: Livro): Observable<Livro> {
+    return this.http.post<Livro>(this.apiUrl, livro);
+  }
+
+  updateLivro(id: string, livro: Livro): Observable<Livro> {
+    return this.http.put<Livro>(`${this.apiUrl}/${id}`, livro);
+  }
+
+  deleteLivro(id: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
+}
+</file>
+
+<file path="src/app/features/livros/services/livros.spec.ts">
+import { TestBed } from '@angular/core/testing';
+
+import { Livros } from './livros';
+
+describe('Livros', () => {
+  let service: Livros;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(Livros);
+  });
+
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+});
+</file>
+
+<file path="src/app/app.config.server.ts">
+import { mergeApplicationConfig, ApplicationConfig } from '@angular/core';
+import { provideServerRendering, withRoutes } from '@angular/ssr';
+import { appConfig } from './app.config';
+import { serverRoutes } from './app.routes.server';
+
+const serverConfig: ApplicationConfig = {
+  providers: [
+    provideServerRendering(withRoutes(serverRoutes))
+  ]
+};
+
+export const config = mergeApplicationConfig(appConfig, serverConfig);
+</file>
+
+<file path="src/app/app.config.ts">
+import { ApplicationConfig } from '@angular/core';
+import { provideRouter } from '@angular/router';
+import { routes } from './app.routes';
+import { provideHttpClient } from '@angular/common/http';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideRouter(routes),
+    provideHttpClient()
+  ]
+};
+</file>
+
+<file path="src/app/app.css">
+
+</file>
+
+<file path="src/app/app.html">
+<header>
+  <h1>Sistema de Cadastro de Livros</h1>
+</header>
+<main>
+  <router-outlet></router-outlet>
+</main>
+</file>
+
+<file path="src/app/app.routes.server.ts">
+import { RenderMode, ServerRoute } from '@angular/ssr';
+
+export const serverRoutes: ServerRoute[] = [
+  {
+    path: '**',
+    renderMode: RenderMode.Prerender
+  }
+];
+</file>
+
+<file path="src/app/app.routes.ts">
+import { Routes } from '@angular/router';
+import { LivrosPageComponent } from './features/livros/pages/livros-page/livros-page.component';
+import { LivroDetalhePageComponent } from './features/livros/pages/livro-detalhe-page/livro-detalhe-page.component';
+
+export const routes: Routes = [
+  { path: '', redirectTo: 'livros', pathMatch: 'full' },
+  { path: 'livros', component: LivrosPageComponent },
+  { path: 'livros/:id', component: LivroDetalhePageComponent }
+];
+</file>
+
+<file path="src/app/app.spec.ts">
+import { TestBed } from '@angular/core/testing';
+import { App } from './app';
+
+describe('App', () => {
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [App],
+    }).compileComponents();
+  });
+
+  it('should create the app', () => {
+    const fixture = TestBed.createComponent(App);
+    const app = fixture.componentInstance;
+    expect(app).toBeTruthy();
+  });
+
+  it('should render title', async () => {
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, frontend-livros');
+  });
+});
+</file>
+
+<file path="src/app/app.ts">
+import { Component, signal } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+
+@Component({
+  selector: 'app-root',
+  imports: [RouterOutlet],
+  templateUrl: './app.html',
+  styleUrl: './app.css'
+})
+export class App {
+  protected readonly title = signal('frontend-livros');
+}
+</file>
+
+<file path="src/index.html">
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>FrontendLivros</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+  <app-root></app-root>
+</body>
+</html>
+</file>
+
+<file path="src/main.server.ts">
+import { BootstrapContext, bootstrapApplication } from '@angular/platform-browser';
+import { App } from './app/app';
+import { config } from './app/app.config.server';
+
+const bootstrap = (context: BootstrapContext) =>
+    bootstrapApplication(App, config, context);
+
+export default bootstrap;
+</file>
+
+<file path="src/main.ts">
+import { bootstrapApplication } from '@angular/platform-browser';
+import { appConfig } from './app/app.config';
+import { App } from './app/app';
+
+bootstrapApplication(App, appConfig)
+  .catch((err) => console.error(err));
+</file>
+
+<file path="src/server.ts">
+import {
+  AngularNodeAppEngine,
+  createNodeRequestHandler,
+  isMainModule,
+  writeResponseToNodeResponse,
+} from '@angular/ssr/node';
+import express from 'express';
+import { join } from 'node:path';
+
+const browserDistFolder = join(import.meta.dirname, '../browser');
+
+const app = express();
+const angularApp = new AngularNodeAppEngine();
+
+/**
+ * Example Express Rest API endpoints can be defined here.
+ * Uncomment and define endpoints as necessary.
+ *
+ * Example:
+ * ```ts
+ * app.get('/api/{*splat}', (req, res) => {
+ *   // Handle API request
+ * });
+ * ```
+ */
+
+/**
+ * Serve static files from /browser
+ */
+app.use(
+  express.static(browserDistFolder, {
+    maxAge: '1y',
+    index: false,
+    redirect: false,
+  }),
+);
+
+/**
+ * Handle all other requests by rendering the Angular application.
+ */
+app.use((req, res, next) => {
+  angularApp
+    .handle(req)
+    .then((response) =>
+      response ? writeResponseToNodeResponse(response, res) : next(),
+    )
+    .catch(next);
+});
+
+/**
+ * Start the server if this module is the main entry point, or it is ran via PM2.
+ * The server listens on the port defined by the `PORT` environment variable, or defaults to 4000.
+ */
+if (isMainModule(import.meta.url) || process.env['pm_id']) {
+  const port = process.env['PORT'] || 4000;
+  app.listen(port, (error) => {
+    if (error) {
+      throw error;
+    }
+
+    console.log(`Node Express server listening on http://localhost:${port}`);
+  });
+}
+
+/**
+ * Request handler used by the Angular CLI (for dev-server and during build) or Firebase Cloud Functions.
+ */
+export const reqHandler = createNodeRequestHandler(app);
+</file>
+
+<file path="src/styles.css">
+/* You can add global styles to this file, and also import other style files */
+</file>
+
+<file path=".editorconfig">
+# Editor configuration, see https://editorconfig.org
+root = true
+
+[*]
+charset = utf-8
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.ts]
+quote_type = single
+ij_typescript_use_double_quotes = false
+
+[*.md]
+max_line_length = off
+trim_trailing_whitespace = false
+</file>
+
+<file path=".gitignore">
+# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
+
+# Compiled output
+/dist
+/tmp
+/out-tsc
+/bazel-out
+
+# Node
+/node_modules
+npm-debug.log
+yarn-error.log
+
+# IDEs and editors
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/mcp.json
+.history/*
+
+# Miscellaneous
+/.angular/cache
+.sass-cache/
+/connect.lock
+/coverage
+/libpeerconnection.log
+testem.log
+/typings
+__screenshots__/
+
+# System files
+.DS_Store
+Thumbs.db
+</file>
+
+<file path=".prettierrc">
+{
+  "printWidth": 100,
+  "singleQuote": true,
+  "overrides": [
+    {
+      "files": "*.html",
+      "options": {
+        "parser": "angular"
+      }
+    }
+  ]
+}
+</file>
+
+<file path="angular.json">
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "cli": {
+    "packageManager": "npm",
+    "analytics": "b3d3ca75-4f17-4883-aaf4-9977330ffcc9"
+  },
+  "newProjectRoot": "projects",
+  "projects": {
+    "frontend-livros": {
+      "projectType": "application",
+      "schematics": {},
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "src/main.ts",
+            "tsConfig": "tsconfig.app.json",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
+            "styles": [
+              "src/styles.css"
+            ],
+            "server": "src/main.server.ts",
+            "outputMode": "server",
+            "security": {
+              "allowedHosts": []
+            },
+            "ssr": {
+              "entry": "src/server.ts"
+            }
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "frontend-livros:build:production"
+            },
+            "development": {
+              "buildTarget": "frontend-livros:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test"
+        }
+      }
+    }
+  }
+}
+</file>
+
+<file path="package.json">
+{
+  "name": "frontend-livros",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test",
+    "serve:ssr:frontend-livros": "node dist/frontend-livros/server/server.mjs"
+  },
+  "private": true,
+  "packageManager": "npm@11.12.1",
+  "dependencies": {
+    "@angular/common": "^21.2.0",
+    "@angular/compiler": "^21.2.0",
+    "@angular/core": "^21.2.0",
+    "@angular/forms": "^21.2.0",
+    "@angular/platform-browser": "^21.2.0",
+    "@angular/platform-server": "^21.2.0",
+    "@angular/router": "^21.2.0",
+    "@angular/ssr": "^21.2.22",
+    "express": "^5.1.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^21.2.22",
+    "@angular/cli": "^21.2.22",
+    "@angular/compiler-cli": "^21.2.0",
+    "@types/express": "^5.0.1",
+    "@types/node": "^20.17.19",
+    "jsdom": "^28.0.0",
+    "prettier": "^3.8.1",
+    "typescript": "~5.9.2",
+    "vitest": "^4.0.8"
+  }
+}
+</file>
+
+<file path="README.md">
+# FrontendLivros
+
+This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.22.
+
+## Development server
+
+To start a local development server, run:
+
+```bash
+ng serve
+```
+
+Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+
+## Code scaffolding
+
+Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+
+```bash
+ng generate component component-name
+```
+
+For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+
+```bash
+ng generate --help
+```
+
+## Building
+
+To build the project run:
+
+```bash
+ng build
+```
+
+This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+
+## Running unit tests
+
+To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+
+```bash
+ng test
+```
+
+## Running end-to-end tests
+
+For end-to-end (e2e) testing, run:
+
+```bash
+ng e2e
+```
+
+Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+
+## Additional Resources
+
+For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+</file>
+
+<file path="tsconfig.app.json">
+/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
+/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./out-tsc/app",
+    "types": [
+      "node"
+    ]
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "src/**/*.spec.ts"
+  ]
+}
+</file>
+
+<file path="tsconfig.json">
+/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
+/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "ES2022",
+    "module": "preserve"
+  },
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true
+  },
+  "files": [],
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
+}
+</file>
+
+<file path="tsconfig.spec.json">
+/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
+/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./out-tsc/spec",
+    "types": [
+      "vitest/globals"
+    ]
+  },
+  "include": [
+    "src/**/*.d.ts",
+    "src/**/*.spec.ts"
+  ]
+}
+</file>
+
+</files>

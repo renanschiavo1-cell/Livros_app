@@ -1,0 +1,7 @@
+<div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 20px;">
+  <app-livro-card 
+    *ngFor="let livro of livros" 
+    [livro]="livro" 
+    (excluir)="onExcluir($event)">
+  </app-livro-card>
+</div>

@@ -1,0 +1,10 @@
+<div style="border: 1px solid #ccc; padding: 15px; border-radius: 8px; width: 250px;">
+  <h3>{{ livro.titulo }}</h3>
+  <p><strong>Autor:</strong> {{ livro.autor }}</p>
+  <p><strong>Status:</strong> {{ livro.status }}</p>
+  
+  <div style="display: flex; gap: 10px; margin-top: 15px;">
+    <button [routerLink]="['/livros', livro.id]">Detalhes</button>
+    <button (click)="onExcluir()" style="color: red;">Excluir</button>
+  </div>
+</div>
